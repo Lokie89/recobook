@@ -10,10 +10,12 @@ public class GetBookIds {
     private static final String url = "https://book.naver.com/search/search.nhn?query=";
     private final String keyword;
     private final int limit;
+    private final int startPage;
 
-    public GetBookIds(String keyword, int limit) {
+    public GetBookIds(String keyword, int limit, int startPage) {
         this.keyword = keyword;
         this.limit = limit;
+        this.startPage = startPage;
     }
 
 
@@ -32,7 +34,7 @@ public class GetBookIds {
     public String readLine(String containStr, String startStr, String endStr) {
         StringBuilder sb = new StringBuilder();
         try {
-            for (int i = 1; i < 10; i++) {
+            for (int i = startPage; i < 10+startPage; i++) {
                 URL streamUrl = new URL(url + keyword + "&page=" + i);
                 BufferedReader br = new BufferedReader(new InputStreamReader(streamUrl.openStream(), "UTF-8"));
                 String line;
