@@ -28,14 +28,14 @@ public class GetBookHtml {
         return startIndex + strLength;
     }
 
-    public String readLine(String id, String containStr, String startStr, String endStr) {
+    public String readLine(String id, String containStr, String notContainStr, String startStr, String endStr) {
         StringBuilder sb = new StringBuilder();
         try {
             URL streamUrl = new URL(detailUrl + id);
             BufferedReader br = new BufferedReader(new InputStreamReader(streamUrl.openStream(), "UTF-8"));
             String line;
             while ((line = br.readLine()) != null) {
-                if (line.contains(containStr)) {
+                if (line.contains(containStr) && !line.contains(notContainStr)) {
                     int startIndex = getIndex(line, startStr);
                     int endIndex = getIndex(line, endStr, startIndex);
                     sb.append(line, startIndex, endIndex);
@@ -50,10 +50,11 @@ public class GetBookHtml {
     public List<String> getSrcs() {
         List<String> imageUrls = new ArrayList<>();
         final String containStr = "<img src=\"https://bookthumb-phinf.pstatic.net/cover/";
+        final String notContainStr = "type=";
         final String startStr = "<img src=\"";
         final String endStr = " ";
         for (String id : idList) {
-            String imageUrl = readLine(id, containStr, startStr, endStr);
+            String imageUrl = readLine(id, containStr, notContainStr, startStr, endStr);
             imageUrl = imageUrl.replace("\"", "");
             imageUrls.add(imageUrl);
         }
