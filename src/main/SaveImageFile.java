@@ -56,6 +56,5 @@ public class SaveImageFile {
             fileName = fileName.split(".jpg")[0];
             saveFile(url, fileName);
         }
-
     }
 }

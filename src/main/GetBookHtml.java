@@ -1,6 +1,7 @@
 package main;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
@@ -28,21 +29,17 @@ public class GetBookHtml {
         return startIndex + strLength;
     }
 
-    public String readLine(String id, String containStr, String notContainStr, String startStr, String endStr) {
+    public String readLine(String id, String containStr, String notContainStr, String startStr, String endStr) throws IOException {
         StringBuilder sb = new StringBuilder();
-        try {
-            URL streamUrl = new URL(detailUrl + id);
-            BufferedReader br = new BufferedReader(new InputStreamReader(streamUrl.openStream(), "UTF-8"));
-            String line;
-            while ((line = br.readLine()) != null) {
-                if (line.contains(containStr) && !line.contains(notContainStr)) {
-                    int startIndex = getIndex(line, startStr);
-                    int endIndex = getIndex(line, endStr, startIndex);
-                    sb.append(line, startIndex, endIndex);
-                }
+        URL streamUrl = new URL(detailUrl + id);
+        BufferedReader br = new BufferedReader(new InputStreamReader(streamUrl.openStream(), "UTF-8"));
+        String line;
+        while ((line = br.readLine()) != null) {
+            if (line.contains(containStr) && !line.contains(notContainStr)) {
+                int startIndex = getIndex(line, startStr);
+                int endIndex = getIndex(line, endStr, startIndex);
+                sb.append(line, startIndex, endIndex);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
         return sb.toString().split(" ")[0];
     }
@@ -54,7 +51,12 @@ public class GetBookHtml {
         final String startStr = "<img src=\"";
         final String endStr = " ";
         for (String id : idList) {
-            String imageUrl = readLine(id, containStr, notContainStr, startStr, endStr);
+            String imageUrl;
+            try {
+                imageUrl = readLine(id, containStr, notContainStr, startStr, endStr);
+            }catch (IOException e){
+                continue;
+            }
             imageUrl = imageUrl.replace("\"", "");
             imageUrls.add(imageUrl);
         }
